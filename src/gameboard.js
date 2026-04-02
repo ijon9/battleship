@@ -53,14 +53,41 @@ export default class Gameboard {
         }
     }
 
+    clearBoard() {
+        for(let i=0; i<10; i++) {
+            for(let j=0; j<10; j++) {
+                this.board[i][j] = -1;
+            }
+        }
+    }
+
+    randomize() {
+        this.clearBoard();
+        for(let i=0; i<5; i++) {
+            const dirs = ['v', 'h'];
+            const dir = dirs[Math.floor(Math.random()*2)];
+            const x = Math.floor(Math.random()*10);
+            const y = Math.floor(Math.random() * 10);
+            try {
+                this.place(i, dir, x, y);
+            }
+            catch(e) {
+                i--;
+            }
+        }
+    }
+
     receiveAttack(x, y) {
         if(this.board[x][y] >= 0) {
             let i = this.board[x][y];
             this.ships[i].hit();
             this.board[x][y] = -3;
-        } else {
+            return true;
+        } else if(this.board[x][y] === -1) {
             this.board[x][y] = -2;
+            return true;
         }
+        return false;
         
     }
 
