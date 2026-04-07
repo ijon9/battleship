@@ -4,6 +4,7 @@ export default class Ship {
         this.length = len;
         this.hits = hits;
         this.sunk = sunk;
+        this.placed = false;
     }
 
     get id() {
@@ -20,6 +21,14 @@ export default class Ship {
 
     set length(val) {
         this._length = val;
+    }
+
+    get placed() {
+        return this._placed;
+    }
+
+    set placed(val) {
+        this._placed = val;
     }
 
     hit() {

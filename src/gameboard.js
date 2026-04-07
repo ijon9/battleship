@@ -31,12 +31,59 @@ export default class Gameboard {
         }
     }
 
+    removeShip(ind, dir, x, y) {
+        if(ind === -1) return;
+        let ship = this.ships[ind];
+        if(dir === 'v') {
+            if(x+ship.length-1 >= 10) return;
+            for(let r=x; r<x+ship.length; r++) {
+                if(this.board[r][y] !== -4) return;
+            }
+            for(let r=x; r<x+ship.length; r++) {
+                this.board[r][y] = -1;
+            }
+        }
+        else {
+            if(y+ship.length-1 >= 10) return;
+            for(let c=y; c<y+ship.length; c++) {
+                if(this.board[x][c] !== -4) return;
+            }
+            for(let c=y; c<y+ship.length; c++) {
+                this.board[x][c] = -1;
+            }
+        }
+    }
+
+    hoverPlace(ind, dir, x, y) {
+        if(ind === -1) return;
+        let ship = this.ships[ind];
+        if(dir === 'v') {
+            if(x+ship.length-1 >= 10) return;
+            for(let r=x; r<x+ship.length; r++) {
+                if(this.board[r][y] !== -1) return;
+            }
+            for(let r=x; r<x+ship.length; r++) {
+                this.board[r][y] = -4;
+            }
+        }
+        else {
+            if(y+ship.length-1 >= 10) return;
+            for(let c=y; c<y+ship.length; c++) {
+                if(this.board[x][c] !== -1) return;
+            }
+            for(let c=y; c<y+ship.length; c++) {
+                this.board[x][c] = -4;
+            }
+        }
+    }
+
     place(ind, dir, x, y) {
+        if(ind === -1) return;
         let ship = this.ships[ind];
         if(dir === 'v') {
             if(x+ship.length-1 >= 10) throw "Not enough room.";
             for(let r=x; r<x+ship.length; r++) {
-                if(this.board[r][y] !== -1) throw "Space occupied.";
+                if(this.board[r][y] !== -1 && this.board[r][y] !== -4) throw "Space occupied.";
             }
             for(let r=x; r<x+ship.length; r++) {
                 this.board[r][y] = ship.id;
@@ -45,12 +92,13 @@ export default class Gameboard {
         else {
             if(y+ship.length-1 >= 10) throw "Not enough room.";
             for(let c=y; c<y+ship.length; c++) {
-                if(this.board[x][c] !== -1) throw "Space occupied.";
+                if(this.board[x][c] !== -1 && this.board[x][c] !== -4) throw "Space occupied.";
             }
             for(let c=y; c<y+ship.length; c++) {
                 this.board[x][c] = ship.id;
             }
         }
+        ship.placed = true;
     }
 
     clearBoard() {
@@ -75,6 +123,9 @@ export default class Gameboard {
                 i--;
             }
         }
+        for(let ship of this.ships) {
+            ship.placed = true;
+        }
     }
 
     receiveAttack(x, y) {
@@ -96,6 +147,28 @@ export default class Gameboard {
             if(!ship.isSunk()) return false;
         }
         return true;
+    }
+
+    placed(i) {
+        return this.ships[i].placed;
+    }
+
+    allPlaced() {
+        for(let ship of this.ships) {
+            if(!ship.placed) return false;
+        }
+        return true;
+    }
+
+    clearAllShips() {
+        for(let i=0; i<10; i++) {
+            for(let j=0; j<10; j++) {
+                this.board[i][j] = -1;
+            }
+        }
+        for(let ship of this.ships) {
+            ship.placed = false;
+        }
     }
 }
 
